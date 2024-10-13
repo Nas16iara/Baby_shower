@@ -8,7 +8,6 @@ const bcrypt = require("bcrypt"); // Ensure bcrypt is required
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const script = require("./js/script.js"); // Adjust path as necessary
 
 console.log(PORT);
 
@@ -24,10 +23,16 @@ app.use(
 );
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(express.static(path.join(__dirname, "html")));
 app.use(express.static(path.join(__dirname, "css")));
 app.use(express.static(path.join(__dirname, "media")));
-app.use(express.static(path.join(__dirname, "script")));
+app.use(express.static(path.join(__dirname, "js")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "html", "index.html"));
+});
+
 // Load existing RSVP data from JSON file
 const dataFilePath = path.join(__dirname, "rsvpData.json"); // Path to JSON file
 let rsvpData = [];
