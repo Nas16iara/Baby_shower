@@ -28,8 +28,21 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Serve the main HTML file
+app.get("/:page", (req, res) => {
+  const page = req.params.page;
+  const filePath = path.join(__dirname, "public", "html", `${page}.html`);
+
+  // Check if the file exists before sending
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send("Page not found");
+  }
+});
+
+// Main route
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "html", "index.html")); // Update the path to reflect the public directory
+  res.sendFile(path.join(__dirname, "public", "html", "index.html"));
 });
 
 // Load existing RSVP data from JSON file

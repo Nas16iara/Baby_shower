@@ -208,6 +208,7 @@ document.addEventListener("click", (event) => {
   if (!event.target.matches("button")) {
     stopAudio();
   }
+  audio.play();
 });
 
 function rsvp() {
