@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSVP Submissions</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Quicksand", sans-serif;
+        margin: 20px;
+        padding: 20px;
+        background-color: #f9f9f9;
+      }
+
+      h1 {
+        color: #ff6f61; /* A soft pink color */
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+      }
+
+      .stats {
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #333;
+      }
+
+      .rsvp-entry {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s;
+      }
+
+      .rsvp-entry:hover {
+        background-color: #ffe6e6; /* Light pink on hover */
+      }
+
+      .back-button {
+        margin-top: 20px;
+        padding: 10px 15px;
+        background-color: #ff6f61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 1.1em;
+      }
+
+      .back-button:hover {
+        background-color: #ff4c4c;
+      }
+
+      .additional-info {
+        display: none; /* Initially hidden */
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+
+        .back-button {
+          width: 100%;
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>RSVP Submissions</h1>
+
+    <div class="stats">
+      <div id="submissionCount">Total Submissions: 0</div>
+      <div id="guestCount">Total Guests: 0</div>
+    </div>
+
+    <div id="rsvpContainer">
+      <!-- RSVP entries will be dynamically inserted here -->
+    </div>
+
+    <button class="back-button" onclick="window.history.back();">Back</button>
+
+    <script>
+      const isPasscodeValid = localStorage.getItem("isHostValid");
+
+      // Check if the user is trying to access rsvp.html
+      if (!isPasscodeValid) {
+        window.location.href = "passwordh.html"; // Redirect to passcode input page
+      }
+      async function fetchRsvpData() {
+        try {
+          const response = await fetch("http://localhost:5115/guest-list");
+          if (!response.ok) throw new Error("Network response was not ok");
+
+          const rsvpData = await response.json();
+          console.log("RSVP Data:", rsvpData);
+          const rsvpContainer = document.getElementById("rsvpContainer");
+          let totalGuests = 0;
+
+          rsvpData.forEach((entry) => {
+            // Create entry div
+            const entryDiv = document.createElement("div");
+            entryDiv.classList.add("rsvp-entry");
+
+            // Add basic info
+            entryDiv.innerHTML = `
+                        <strong>Name:</strong> ${entry.name}<br>
+                        <strong>Contact Info:</strong> ${entry.contactInfo}<br>
+                        <strong>Attendance:</strong> ${entry.attendance}<br>
+                        <strong>Guests:</strong> ${entry.guests}<br>
+                        <strong>Message:</strong> ${entry.message}
+                    `;
+
+            // Create additional info div
+            const additionalInfoDiv = document.createElement("div");
+            additionalInfoDiv.classList.add("additional-info");
+            additionalInfoDiv.innerHTML = `<strong>Additional Info:</strong> <p>${
+              entry.additionalInfo || "No additional info provided."
+            }</p>`;
+
+            // Append additional info to entry
+            entryDiv.appendChild(additionalInfoDiv);
+
+            // Add click event to toggle the additional info
+            entryDiv.addEventListener("click", () => {
+              const isVisible = additionalInfoDiv.style.display === "block";
+              additionalInfoDiv.style.display = isVisible ? "none" : "block";
+            });
+
+            // Append entry to container
+            rsvpContainer.appendChild(entryDiv);
+
+            // Update total guests count
+            totalGuests += parseInt(entry.guests) || 0;
+          });
+
+          // Update submission and guest counts
+          document.getElementById(
+            "submissionCount"
+          ).innerText = `Total Submissions: ${rsvpData.length}`;
+          document.getElementById(
+            "guestCount"
+          ).innerText = `Total Guests: ${totalGuests}`;
+        } catch (error) {
+          console.error("Error fetching RSVP data:", error);
+        }
+      }
+
+      // Call the fetch function on page load
+
+      window.onload = fetchRsvpData;
+    </script>
+  </body>
+</html>

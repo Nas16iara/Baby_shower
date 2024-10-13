@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSVP Form</title>
+    <link rel="stylesheet" href="/css/rsvp.css" />
+    <script src="/js/script.js" defer></script>
+  </head>
+  <body>
+    <button id="backButton" class="backButton">Back</button>
+
+    <div class="form-container">
+      <h1>🎉 You're Invited! 🎉</h1>
+      <h2>Please RSVP for the Baby Shower</h2>
+      <div id="errorMessage" style="color: red"></div>
+      <div id="thankYouMessage" style="display: none">
+        Thank you for your RSVP!
+      </div>
+      <form id="rsvpForm">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" required placeholder="Enter your name" />
+
+        <label for="contactInfo">Your Email or Phone Number:</label>
+        <input
+          type="text"
+          id="contactInfo"
+          required
+          placeholder="Enter your email or phone number"
+        />
+
+        <label for="attendance">Will you attend?</label>
+        <select id="attendance" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="yes">Yes, I can't wait!</option>
+          <option value="no">Sorry, I can't make it.</option>
+        </select>
+
+        <label for="guests">Number of Guests:</label>
+        <input type="number" id="guests" min="0" value="0" />
+
+        <label for="message">Message (Optional):</label>
+        <textarea
+          id="message"
+          rows="4"
+          placeholder="Any special wishes or notes?"
+        ></textarea>
+        <button type="submit">Submit RSVP</button>
+      </form>
+    </div>
+    <script>
+      const isPasscodeValid = localStorage.getItem("isPasscodeValid");
+
+      // Check if the user is trying to access rsvp.html
+      if (!isPasscodeValid) {
+        window.location.href = "password.html"; // Redirect to passcode input page
+      }
+    </script>
+  </body>
+</html>
