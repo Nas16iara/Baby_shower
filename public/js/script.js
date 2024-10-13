@@ -1,4 +1,6 @@
 const backendUrl = "https://nakyiahpoodababyshower.onrender.com";
+
+// const backendUrl = "http://localhost:5115"; 
 function openUp() {
   const elements = {
     opentop: document.querySelector("#opentop"),
@@ -89,35 +91,34 @@ document.addEventListener("DOMContentLoaded", () => {
       window.history.back(); // Go back to the previous page
     });
   }
-
-  const submitPasscodeButton = document.getElementById("submitPasscode");
-  if (submitPasscodeButton) {
-    submitPasscodeButton.addEventListener(
-      "click",
-      handleGuestPasscodeSubmission
-    ); // Use specific function for guests
-  }
-
-  const submitHostPasscodeButton =
-    document.getElementById("submitHostPasscode");
-  if (submitHostPasscodeButton) {
-    submitHostPasscodeButton.addEventListener(
-      "click",
-      handleHostPasscodeSubmission
-    ); // Use specific function for hosts
-  }
-
   const rsvpForm = document.getElementById("rsvpForm");
   if (rsvpForm) {
     rsvpForm.addEventListener("submit", handleRsvpSubmission);
   }
 });
 
+const submitPasscodeButton = document.getElementById("submitPasscode");
+if (submitPasscodeButton) {
+  submitPasscodeButton.addEventListener("click", handleGuestPasscodeSubmission);
+}
+
+const submitHostPasscodeButton = document.getElementById("submitHostPasscode");
+if (submitHostPasscodeButton) {
+  submitHostPasscodeButton.addEventListener(
+    "click",
+    handleHostPasscodeSubmission
+  );
+}
+
 function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
+  console.log("url:", url);
+  console.log("localStorageKey:", localStorageKey);
+  console.log("redirectUrl:", redirectUrl);
+
   const passcode = document.getElementById(
     url === `${backendUrl}/validate` ? "hpasscode" : "passcode"
   ).value;
-  // Validate input before sending
+
   if (!passcode) {
     document.getElementById("errorMessage").innerText =
       "Please enter a passcode.";
@@ -132,7 +133,6 @@ function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
     .then((response) => {
       if (!response.ok) {
         return response.json().then((data) => {
-          // Customize error message based on response data if available
           document.getElementById("errorMessage").innerText =
             data.message || "Access denied.";
         });
@@ -148,7 +148,7 @@ function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
 
 // Function for host passcode submission
 function handleHostPasscodeSubmission() {
-  handlePasscodeSubmission(`${backendUrl}\validate`, "isHostValid", "/host");
+  handlePasscodeSubmission(`${backendUrl}/validate`, "isHostValid", "/host");
 }
 
 // Function for guest passcode submission
@@ -199,11 +199,11 @@ function handleRsvpSubmission(event) {
 
 // Stop audio on click
 document.addEventListener("click", (event) => {
+  const audio = document.getElementById("background-music");
   // Check if the clicked element is a button
   if (!event.target.matches("button")) {
     stopAudio();
   }
-  audio.play();
 });
 
 function rsvp() {
