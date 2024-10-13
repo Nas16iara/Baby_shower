@@ -149,11 +149,7 @@ function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
 
 // Function for host passcode submission
 function handleHostPasscodeSubmission() {
-  handlePasscodeSubmission(
-    `${backendUrl}\validate`,
-    "isHostValid",
-    "host.html"
-  );
+  handlePasscodeSubmission(`${backendUrl}\validate`, "isHostValid", "/host");
 }
 
 // Function for guest passcode submission
@@ -161,7 +157,7 @@ function handleGuestPasscodeSubmission() {
   handlePasscodeSubmission(
     `${backendUrl}/validate`,
     "isPasscodeValid",
-    "rsvp.html"
+    "/rsvp"
   );
 }
 
@@ -195,7 +191,7 @@ function handleRsvpSubmission(event) {
         document.getElementById("errorMessage").innerText = data.message; // Display error message
         throw new Error(data.message);
       }
-      window.location.href = "thank.html"; // Redirect to passcode input page
+      window.location.href = "/thank"; // Redirect to passcode input page
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -212,5 +208,5 @@ document.addEventListener("click", (event) => {
 });
 
 function rsvp() {
-  window.location.href = "password.html"; // Redirect to passcode input page
+  window.location.href = "/password"; // Redirect to passcode input page
 }
