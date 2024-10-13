@@ -1,4 +1,4 @@
-require("dotenv").config();
+const env = require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt"); // Ensure bcrypt is required
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const script = require("./js/script.js"); // Adjust path as necessary
 
 console.log(PORT);
 
@@ -18,7 +19,7 @@ const hostPasscode = process.env.HOST_PASSCODE;
 // Middleware
 app.use(
   cors({
-    origin: "http://127.0.0.1:5500", // Replace with your frontend's origin
+    origin: "https://nakyiahpoodababyshower.onrender.com", // Replace with your frontend's origin
   })
 );
 app.use(bodyParser.urlencoded({ extended: true }));

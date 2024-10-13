@@ -1,3 +1,5 @@
+const backendUrl = config.backendUrl || "http://localhost:5115";
+
 function openUp() {
   const elements = {
     opentop: document.querySelector("#opentop"),
@@ -114,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
   const passcode = document.getElementById(
-    url === "http://localhost:5115/validate" ? "hpasscode" : "passcode"
+    url === `${backendUrl}/validate` ? "hpasscode" : "passcode"
   ).value;
   // Validate input before sending
   if (!passcode) {
@@ -148,7 +150,7 @@ function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
 // Function for host passcode submission
 function handleHostPasscodeSubmission() {
   handlePasscodeSubmission(
-    "http://localhost:5115/validate",
+    `${backendUrl}\validate`,
     "isHostValid",
     "host.html"
   );
@@ -157,7 +159,7 @@ function handleHostPasscodeSubmission() {
 // Function for guest passcode submission
 function handleGuestPasscodeSubmission() {
   handlePasscodeSubmission(
-    "http://localhost:5115/validate",
+    `${backendUrl}/validate`,
     "isPasscodeValid",
     "rsvp.html"
   );
@@ -181,7 +183,7 @@ function handleRsvpSubmission(event) {
   document.getElementById("errorMessage").innerText = "";
 
   // Send data to server
-  fetch("http://localhost:5115/rsvp", {
+  fetch(`${backendUrl}/rsvp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(rsvpData),

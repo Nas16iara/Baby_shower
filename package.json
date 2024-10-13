@@ -13,7 +13,8 @@
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "main": "server.js"
   },
   "keywords": [],
   "author": "",
