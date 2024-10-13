@@ -1,6 +1,6 @@
 const backendUrl = "https://nakyiahpoodababyshower.onrender.com";
 
-// const backendUrl = "http://localhost:5115"; 
+// const backendUrl = "http://localhost:5115";
 function openUp() {
   const elements = {
     opentop: document.querySelector("#opentop"),
@@ -87,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const backButton = document.getElementById("backButton");
   if (backButton) {
     backButton.addEventListener("click", () => {
-      console.log("Back button clicked");
       window.history.back(); // Go back to the previous page
     });
   }
@@ -111,12 +110,8 @@ if (submitHostPasscodeButton) {
 }
 
 function handlePasscodeSubmission(url, localStorageKey, redirectUrl) {
-  console.log("url:", url);
-  console.log("localStorageKey:", localStorageKey);
-  console.log("redirectUrl:", redirectUrl);
-
   const passcode = document.getElementById(
-    url === `${backendUrl}/validate` ? "hpasscode" : "passcode"
+    localStorageKey == "isHostValid" ? "hpasscode" : "passcode"
   ).value;
 
   if (!passcode) {
@@ -162,7 +157,6 @@ function handleGuestPasscodeSubmission() {
 
 function handleRsvpSubmission(event) {
   event.preventDefault(); // Prevent default form submission
-  console.log("RSVP Form Submission");
 
   // Collecting form data
   const rsvpData = {
@@ -172,8 +166,6 @@ function handleRsvpSubmission(event) {
     guests: document.getElementById("guests").value,
     message: document.getElementById("message").value,
   };
-  console.log("RSVP Data:", rsvpData);
-
   // Clear any previous error messages
   document.getElementById("errorMessage").innerText = "";
 
@@ -186,7 +178,6 @@ function handleRsvpSubmission(event) {
     .then(async (response) => {
       if (!response.ok) {
         const data = await response.json();
-        console.error("Error:", data.message);
         document.getElementById("errorMessage").innerText = data.message; // Display error message
         throw new Error(data.message);
       }
