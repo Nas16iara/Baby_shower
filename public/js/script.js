@@ -1,5 +1,4 @@
-const backendUrl = config.backendUrl || "http://localhost:5115";
-
+const backendUrl = "https://nakyiahpoodababyshower.onrender.com";
 function openUp() {
   const elements = {
     opentop: document.querySelector("#opentop"),

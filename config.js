@@ -2,3 +2,5 @@
 const config = {
   backendUrl: "https://your-backend-app.onrender.com", // Production
 };
+
+export default config;
