@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-const bcrypt = require("bcrypt"); // Ensure bcrypt is required
+const bcrypt = require("bcrypt");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,13 +24,12 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(express.static(path.join(__dirname, "html")));
-app.use(express.static(path.join(__dirname, "css")));
-app.use(express.static(path.join(__dirname, "media")));
-app.use(express.static(path.join(__dirname, "js")));
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, "public")));
 
+// Serve the main HTML file
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "html", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "html", "index.html")); // Update the path to reflect the public directory
 });
 
 // Load existing RSVP data from JSON file
@@ -58,11 +57,12 @@ initializeRsvpData();
 // Validate passcode route
 app.post("/validate", async (req, res) => {
   const enteredPasscode = req.body.passcode;
-  const isValid = enteredPasscode == guestPasscode || hostPasscode;
+  const isValid =
+    enteredPasscode === guestPasscode || enteredPasscode === hostPasscode;
   if (!isValid) {
-    return res.status(403).json({ message: "Invalid passcode." }); // Send JSON response
+    return res.status(403).json({ message: "Invalid passcode." });
   }
-  res.status(200).json({ message: "Passcode is valid." }); // Send a response back
+  res.status(200).json({ message: "Passcode is valid." });
 });
 
 // RSVP route
@@ -71,17 +71,14 @@ app.post("/rsvp", (req, res) => {
   rsvpData.push(newEntry); // Add new entry to the array
   fs.writeFileSync(dataFilePath, JSON.stringify(rsvpData, null, 2)); // Write to JSON file
   console.log("RSVP Data:", newEntry); // Log the received data
-  res.status(200).json({ message: "RSVP received!" }); // Send a response back
+  res.status(200).json({ message: "RSVP received!" });
 });
 
 // Endpoint to get RSVP data
 app.get("/guest-list", (req, res) => {
-  console.log("Getting RSVP data..."); // Log a message to the console
-
-  console.log("RSVP Data", rsvpData);
-  // Check if rsvpData is initialized and is an array
+  console.log("Getting RSVP data...");
   if (!Array.isArray(rsvpData) || rsvpData.length === 0) {
-    return res.status(200).json({ message: "No RSVP data found.", data: [] }); // Return a message with an empty array
+    return res.status(200).json({ message: "No RSVP data found.", data: [] });
   }
   res.status(200).json(rsvpData); // Send the RSVP data as a JSON response
 });
