@@ -9,9 +9,19 @@
       rel="stylesheet"
     />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../favicon-16x16.png"
+    />
+    <link rel="manifest" href="../site.webmanifest" />
 
     <script src="/js/script.js" defer></script>
     <style>
@@ -105,6 +115,8 @@
     <button class="back-button" onclick="window.history.back();">Back</button>
 
     <script>
+      const backendUrl = "https://nakyiahpoodababyshower.onrender.com";
+      // const backendUrl = "http://localhost:5115";
       const isPasscodeValid = localStorage.getItem("isHostValid");
 
       // Check if the user is trying to access rsvp.html
@@ -113,60 +125,76 @@
       }
       async function fetchRsvpData() {
         try {
-          const response = await fetch("http://localhost:5115/guest-list");
+          const response = await fetch(`${backendUrl}/list`);
+          const rsvpData = await response.json(); // Parse JSON response
+
           if (!response.ok) throw new Error("Network response was not ok");
 
-          const rsvpData = await response.json();
-          console.log("RSVP Data:", rsvpData);
-          const rsvpContainer = document.getElementById("rsvpContainer");
-          let totalGuests = 0;
+          // Check if the response is an array
+          if (Array.isArray(rsvpData)) {
+            const rsvpContainer = document.getElementById("rsvpContainer");
+            rsvpContainer.innerHTML = ""; // Clear existing entries
 
-          rsvpData.forEach((entry) => {
-            // Create entry div
-            const entryDiv = document.createElement("div");
-            entryDiv.classList.add("rsvp-entry");
+            if (rsvpData.length === 0) {
+              rsvpContainer.innerHTML = "<p>No RSVP entries found.</p>";
+              document.getElementById("submissionCount").innerText =
+                "Total Submissions: 0";
+              document.getElementById("guestCount").innerText =
+                "Total Guests: 0";
+              return;
+            }
 
-            // Add basic info
-            entryDiv.innerHTML = `
-                        <strong>Name:</strong> ${entry.name}<br>
-                        <strong>Contact Info:</strong> ${entry.contactInfo}<br>
-                        <strong>Attendance:</strong> ${entry.attendance}<br>
-                        <strong>Guests:</strong> ${entry.guests}<br>
-                        <strong>Message:</strong> ${entry.message}
-                    `;
+            let totalGuests = 0;
 
-            // Create additional info div
-            const additionalInfoDiv = document.createElement("div");
-            additionalInfoDiv.classList.add("additional-info");
-            additionalInfoDiv.innerHTML = `<strong>Additional Info:</strong> <p>${
-              entry.additionalInfo || "No additional info provided."
-            }</p>`;
+            rsvpData.forEach((entry) => {
+              const entryDiv = document.createElement("div");
+              entryDiv.classList.add("rsvp-entry");
+              entryDiv.innerHTML = `
+          <strong>Name:</strong> ${entry.name}<br>
+          <strong>Contact Info:</strong> ${entry.contactInfo}<br>
+          <strong>Attendance:</strong> ${entry.attendance}<br>
+          <strong>Guests:</strong> ${entry.guests}<br>
+          <strong>Message:</strong> ${entry.message}
+          <button class="delete-button" data-id="${entry.id}">Delete</button>
+        `;
 
-            // Append additional info to entry
-            entryDiv.appendChild(additionalInfoDiv);
+              // Add delete button functionality
+              const deleteButton = entryDiv.querySelector(".delete-button");
+              deleteButton.addEventListener("click", () =>
+                deleteRsvpEntry(entry.id)
+              );
 
-            // Add click event to toggle the additional info
-            entryDiv.addEventListener("click", () => {
-              const isVisible = additionalInfoDiv.style.display === "block";
-              additionalInfoDiv.style.display = isVisible ? "none" : "block";
+              rsvpContainer.appendChild(entryDiv);
+              totalGuests += parseInt(entry.guests) || 0;
             });
 
-            // Append entry to container
-            rsvpContainer.appendChild(entryDiv);
-
-            // Update total guests count
-            totalGuests += parseInt(entry.guests) || 0;
-          });
-
-          // Update submission and guest counts
-          document.getElementById(
-            "submissionCount"
-          ).innerText = `Total Submissions: ${rsvpData.length}`;
-          document.getElementById(
-            "guestCount"
-          ).innerText = `Total Guests: ${totalGuests}`;
+            // Update counts
+            document.getElementById(
+              "submissionCount"
+            ).innerText = `Total Submissions: ${rsvpData.length}`;
+            document.getElementById(
+              "guestCount"
+            ).innerText = `Total Guests: ${totalGuests}`;
+          } else {
+            document.getElementById("rsvpContainer").innerHTML =
+              "<p>No RSVP entries found.</p>";
+          }
         } catch (error) {
           console.error("Error fetching RSVP data:", error);
+        }
+      }
+      async function deleteRsvpEntry(id) {
+        try {
+          const response = await fetch(`${backendUrl}/rsvp/${id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) throw new Error("Network response was not ok");
+
+          // Fetch updated RSVP data after deletion
+          await fetchRsvpData();
+        } catch (error) {
+          console.error("Error deleting RSVP entry:", error);
         }
       }
 
